@@ -1,0 +1,110 @@
+from django.contrib.auth.models import User
+from elections.models import *
+from rest_framework import serializers
+from django.conf import settings
+from django.urls import reverse
+from rest_framework.exceptions import ValidationError
+
+# class UserSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
+
+#     def create(self, validated_data):
+#         user = User.objects.create_user(**validated_data)
+#         return user
+class UserSerializer(serializers.ModelSerializer):
+    registration_number = serializers.CharField()  # Add this line
+    web_mail = serializers.EmailField()  # Add this line
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password', 'registration_number', 'web_mail']
+        extra_kwargs = {'password': {'write_only': True}}  # Ensure password is write-only
+
+    def create(self, validated_data):
+        # Extract registration number and web mail
+        registration_number = validated_data.pop('registration_number')
+        web_mail = validated_data.pop('web_mail')
+
+        # Verify that the registration number and web mail exist in the Student table
+        try:
+            student = Student.objects.get(reg_no=registration_number, web_mail=web_mail)
+        except Student.DoesNotExist:
+            raise ValidationError("Invalid registration number or web mail.")
+
+        # Create the user
+        user = User.objects.create_user(**validated_data)
+        return user
+
+    def to_representation(self, instance):
+        # Customize the representation to exclude registration_number and web_mail
+        representation = super().to_representation(instance)
+        representation.pop('registration_number', None)
+        representation.pop('web_mail', None)
+        return representation
+
+from rest_framework import serializers
+from elections.models import Candidate, Position
+from django.contrib.auth.models import User
+
+class CandidateSerializer(serializers.ModelSerializer):
+    fullname = serializers.CharField(source='candidate_name', read_only=True)
+    position_name = serializers.CharField(source='position.name', read_only=True)
+
+    class Meta:
+        model = Candidate
+        fields = ['fullname', 'position_name', 'profile_picture', 'position']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # Check if profile_picture exists and convert it to an absolute URL
+        if instance.profile_picture:
+            representation['profile_picture'] = self.get_absolute_url(instance.profile_picture)
+        return representation
+
+    def get_absolute_url(self, file_field):
+        # Construct the absolute URL for the media file
+        return f"{settings.SITE_URL}{file_field.url}"  # Ensure SITE_URL is set in your settings
+
+class ElectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Election
+        fields = ['id', 'name', 'start_date', 'end_date', 'status']
+
+
+class VoteSerializer(serializers.Serializer):
+    candidate = serializers.PrimaryKeyRelatedField(queryset=Candidate.objects.none(), required=True)
+
+    def __init__(self, *args, **kwargs):
+        # Retrieve the position_id from the URL context (passed via view)
+        position_id = kwargs['context']['view'].kwargs.get('position_id')
+
+        # If position_id is available, filter candidates by the specified position
+        if position_id:
+            queryset = Candidate.objects.filter(position_id=position_id)
+            # Update the queryset for the candidate field
+            self.fields['candidate'].queryset = queryset
+
+        super().__init__(*args, **kwargs)
+
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from rest_framework.exceptions import AuthenticationFailed
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, attrs):
+        username = attrs.get('username')
+        password = attrs.get('password')
+
+        # Validate user credentials
+        user = User.objects.filter(username=username).first()
+        if not user or not user.check_password(password):
+            raise AuthenticationFailed('Invalid username or password')
+
+        attrs['user'] = user
+        return attrs
