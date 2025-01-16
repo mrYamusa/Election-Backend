@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^seknyy8o2s_3c8^bte&h6d(n&e5g=104p*obx-*h6uv$xc&cb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['https://election-backend-7v1z.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['election-backend-7v1z.onrender.com', 'localhost', '127.0.0.1']
 # ALLOWED_HOSTS = ['your-app.onrender.com', 'www.yourdomain.com']
 
 
