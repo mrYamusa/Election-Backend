@@ -5,6 +5,10 @@ name = "pypi"
 
 [packages]
 pandas = "*"
+mysqlclient = "*"
+gunicorn = "*"
+whitenoise = "*"
+dj-database-url = "*"
 
 [dev-packages]
 

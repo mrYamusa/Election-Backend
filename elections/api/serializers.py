@@ -5,22 +5,14 @@ from django.conf import settings
 from django.urls import reverse
 from rest_framework.exceptions import ValidationError
 
-# class UserSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = User
-#         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
-
-#     def create(self, validated_data):
-#         user = User.objects.create_user(**validated_data)
-#         return user
 class UserSerializer(serializers.ModelSerializer):
-    registration_number = serializers.CharField()  # Add this line
-    web_mail = serializers.EmailField()  # Add this line
+    registration_number = serializers.CharField(write_only=True)
+    web_mail = serializers.EmailField(write_only=True)
 
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password', 'registration_number', 'web_mail']
-        extra_kwargs = {'password': {'write_only': True}}  # Ensure password is write-only
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
         # Extract registration number and web mail
@@ -33,8 +25,18 @@ class UserSerializer(serializers.ModelSerializer):
         except Student.DoesNotExist:
             raise ValidationError("Invalid registration number or web mail.")
 
+        # Check if the user already exists
+        if User.objects.filter(username=validated_data['username']).exists():
+            raise ValidationError("A user with this username already exists.")
+        if User.objects.filter(email=validated_data['email']).exists():
+            raise ValidationError("A user with this email already exists.")
+
         # Create the user
         user = User.objects.create_user(**validated_data)
+
+        # Create the UserProfile explicitly here
+        UserProfile.objects.create(user=user, registration_number=registration_number, web_mail=web_mail)
+
         return user
 
     def to_representation(self, instance):
@@ -43,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
         representation.pop('registration_number', None)
         representation.pop('web_mail', None)
         return representation
+
 
 from rest_framework import serializers
 from elections.models import Candidate, Position

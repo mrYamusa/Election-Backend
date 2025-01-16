@@ -1,5 +1,4 @@
 # your_app/management/commands/import_students.py
-
 import pandas as pd
 from django.core.management.base import BaseCommand
 from elections.models import Student  # Adjust the import based on your model

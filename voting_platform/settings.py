@@ -26,6 +26,8 @@ SECRET_KEY = 'django-insecure-^seknyy8o2s_3c8^bte&h6d(n&e5g=104p*obx-*h6uv$xc&cb
 DEBUG = True
 
 ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ['your-app.onrender.com', 'www.yourdomain.com']
+
 
 SITE_URL = 'http://127.0.0.1:8000'  # Change this to your production URL
 # Application definition
@@ -40,18 +42,21 @@ INSTALLED_APPS = [
     # Local Apps
     'rest_framework',
     # 'rest_framework_simplejwt',
-    'elections',
+    # 'elections',
     'rest_framework.authtoken',  # Add this
+    'elections.apps.ElectionsConfig',  # Use the full path to your AppConfig class
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'voting_platform.urls'
@@ -80,10 +85,19 @@ WSGI_APPLICATION = 'voting_platform.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nacos_election',
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': 'mr.yamusa',
     }
 }
+import dj_database_url
+
+# DATABASES = {
+#     'default': dj_database_url.config(default='postgresql://mr_yamusa:Hg0lDRzVlDf5c4mOiv1AsQD2bXAUq4tN@dpg-cu4ecrlumphs7387jumg-a.oregon-postgres.render.com/nacos_election')
+# }
+DATABASES['default'] = dj_database_url.parse("postgresql://mr_yamusa:Hg0lDRzVlDf5c4mOiv1AsQD2bXAUq4tN@dpg-cu4ecrlumphs7387jumg-a.oregon-postgres.render.com/nacos_election")
 
 
 # Password validation
@@ -129,14 +143,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
 import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Media files (Uploaded files by users)
+MEDIA_URL = '/media/'  # URL to access the media files
+MEDIA_ROOT = BASE_DIR / 'media'  # Local file storage path (use cloud storage for production)
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
