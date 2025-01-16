@@ -29,7 +29,7 @@ ALLOWED_HOSTS = ['https://election-backend-7v1z.onrender.com', 'localhost', '127
 # ALLOWED_HOSTS = ['your-app.onrender.com', 'www.yourdomain.com']
 
 
-SITE_URL = 'http://127.0.0.1:8000'  # Change this to your production URL
+SITE_URL = 'https://election-backend-7v1z.onrender.com'  # Change this to your production URL
 # Application definition
 
 INSTALLED_APPS = [
