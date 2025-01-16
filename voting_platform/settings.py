@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-^seknyy8o2s_3c8^bte&h6d(n&e5g=104p*obx-*h6uv$xc&cb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['https://election-backend-7v1z.onrender.com']
 # ALLOWED_HOSTS = ['your-app.onrender.com', 'www.yourdomain.com']
 
 
