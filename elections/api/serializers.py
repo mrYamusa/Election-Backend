@@ -54,11 +54,17 @@ from django.contrib.auth.models import User
 class CandidateSerializer(serializers.ModelSerializer):
     fullname = serializers.CharField(source='candidate_name', read_only=True)
     position_name = serializers.CharField(source='position.name', read_only=True)
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Candidate
         fields = ['fullname', 'position_name', 'profile_picture', 'position']
 
+    def get_profile_picture(self, obj):
+        if obj.profile_picture:
+            return obj.profile_picture.url
+        return None
+    
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         # Check if profile_picture exists and convert it to an absolute URL

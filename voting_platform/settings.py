@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -45,6 +48,8 @@ INSTALLED_APPS = [
     # 'elections',
     'rest_framework.authtoken',  # Add this
     'elections.apps.ElectionsConfig',  # Use the full path to your AppConfig class
+    'cloudinary_storage',  # Add this
+    'cloudinary',  # Add this
 ]
 
 MIDDLEWARE = [
@@ -127,6 +132,13 @@ REST_FRAMEWORK = {
     # ),
 }
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dbpp4q04p',
+    'API_KEY': '426631541897162',
+    'API_SECRET': 'M2FJDY1s2YHQTGEQh2t6gjrzrlI'  # Replace with your actual API secret
+}
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
@@ -145,6 +157,8 @@ USE_TZ = True
 
 import os
 from pathlib import Path
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

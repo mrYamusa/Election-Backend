@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 class Position(models.Model):
@@ -17,7 +18,8 @@ class Candidate(models.Model):
     candidate_name = models.CharField(max_length=255, null=True, blank=True)
     position = models.ForeignKey(Position, on_delete=models.CASCADE)  # The position they are running for
     # bio = models.TextField()  # Bio or description of the candidate
-    profile_picture = models.ImageField(upload_to='candidate_photos/', null=True, blank=True)  # Profile picture
+    # profile_picture = models.ImageField(upload_to='candidate_photos/', null=True, blank=True)  # Profile picture
+    profile_picture = CloudinaryField('image', folder='candidate_photos/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     vote_count = models.PositiveIntegerField(default=0)  # Initialize vote count to zero
 
