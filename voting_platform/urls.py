@@ -18,11 +18,22 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import HttpResponseNotFound
+from django.http import FileResponse
+import os
+
+def serve_media(request, path):
+    file_path = os.path.join(settings.MEDIA_ROOT, path)
+    if os.path.exists(file_path):
+        return FileResponse(open(file_path, 'rb'))
+    return HttpResponseNotFound('File not found')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('elections/', include('elections.api.urls'))
+    path('elections/', include('elections.api.urls')),
+    path('media/candidate_photos/', serve_media, name='serve-media'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
