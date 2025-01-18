@@ -65,12 +65,12 @@ class CandidateSerializer(serializers.ModelSerializer):
             return obj.profile_picture.url
         return None
     
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        # Check if profile_picture exists and convert it to an absolute URL
-        if instance.profile_picture:
-            representation['profile_picture'] = self.get_absolute_url(instance.profile_picture)
-        return representation
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     # Check if profile_picture exists and convert it to an absolute URL
+    #     if instance.profile_picture:
+    #         representation['profile_picture'] = self.get_absolute_url(instance.profile_picture)
+    #     return representation
 
     def get_absolute_url(self, file_field):
         # Construct the absolute URL for the media file
