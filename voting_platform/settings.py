@@ -50,9 +50,11 @@ INSTALLED_APPS = [
     'elections.apps.ElectionsConfig',  # Use the full path to your AppConfig class
     'cloudinary_storage',  # Add this
     'cloudinary',  # Add this
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # Add this line
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -138,7 +140,27 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': 'M2FJDY1s2YHQTGEQh2t6gjrzrlI'  # Replace with your actual API secret
 }
 
+CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",  # Include OPTIONS for preflight requests
+]
+
+# Optionally, allow specific headers
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "x-csrftoken",
+    "accept",
+    "origin",
+    "user-agent",
+    "x-requested-with",
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
