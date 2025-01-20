@@ -153,7 +153,7 @@ class ListCandidatesByPositionView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        election_id = self.kwargs['election_id']
+        # election_id = self.kwargs['election_id']
         position_id = self.kwargs['position_id']
         # Filter candidates for the election and position
         return Candidate.objects.filter(position_id=position_id)
