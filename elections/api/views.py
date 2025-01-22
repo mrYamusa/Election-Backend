@@ -36,7 +36,12 @@ class LoginView(generics.GenericAPIView):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
 
-        return Response({'token': token.key})
+        return Response({
+            'token': token.key,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'username': user.username
+        })
 
 # Create Election View
 class CreateElectionView(generics.CreateAPIView):
