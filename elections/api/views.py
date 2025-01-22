@@ -5,7 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, LoginSerializer
 from elections.models import Election, Candidate, Vote
-from .serializers import ElectionSerializer, CandidateSerializer, VoteSerializer
+from .serializers import ElectionSerializer, CandidateSerializer, VoteSerializer, PositionSerializer, UserVoteHistorySerializer
 from rest_framework.exceptions import ValidationError
 from django.db import models
 
@@ -168,6 +168,22 @@ class ListCandidatesByPositionView(generics.ListAPIView):
         serializer = CandidateSerializer(candidates, many=True)
         return Response(serializer.data)
 
+
+class ListPositionsView(generics.ListAPIView):
+    queryset = Position.objects.all()
+    serializer_class = PositionSerializer
+    permission_classes = [IsAuthenticated]  # Require authentication to view positions
+
+# views.py
+class UserVoteHistoryView(generics.ListAPIView):
+    serializer_class = UserVoteHistorySerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Filter votes for the currently authenticated user
+        return Vote.objects.filter(voter=self.request.user).select_related(
+            'position', 'candidate', 'election'
+        ).order_by('-created_at')
 
 from rest_framework.views import APIView
 class LogoutView(APIView):

@@ -111,3 +111,20 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+class PositionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Position
+        fields = ['id', 'name', 'created_at']
+
+
+# serializers.py
+class UserVoteHistorySerializer(serializers.ModelSerializer):
+    position_name = serializers.CharField(source='position.name')
+    candidate_name = serializers.CharField(source='candidate.candidate_name')
+    election_name = serializers.CharField(source='election.name')
+    voted_at = serializers.DateTimeField(source='created_at')
+
+    class Meta:
+        model = Vote
+        fields = ['position_name', 'candidate_name', 'election_name', 'voted_at']
