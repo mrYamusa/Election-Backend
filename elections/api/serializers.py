@@ -27,9 +27,9 @@ class UserSerializer(serializers.ModelSerializer):
 
         # Check if the user already exists
         if User.objects.filter(username=validated_data['username']).exists():
-            raise ValidationError("A user with this username already exists.")
-        if User.objects.filter(web_mail=validated_data['web_mail']).exists():
-            raise ValidationError("A user with this email already exists.")
+            raise ValidationError({"username": "A user with this username already exists."})
+        if User.objects.filter(email=validated_data['email']).exists():  # Corrected to check email
+            raise ValidationError({"email": "A user with this email already exists."})
 
         # Create the user
         user = User.objects.create_user(**validated_data)

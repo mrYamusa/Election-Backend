@@ -19,9 +19,13 @@ class RegisterView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            serializer.is_valid(raise_exception=True)  # This will raise a ValidationError if invalid
+            self.perform_create(serializer)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except ValidationError as e:
+            # Return a structured error response
+            return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
 # Login View
 class LoginView(generics.GenericAPIView):
