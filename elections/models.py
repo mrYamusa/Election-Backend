@@ -55,6 +55,8 @@ class Student(models.Model):
     reg_no = models.IntegerField(unique=True)
     web_mail = models.EmailField(unique=True)
 
+    def __str__(self):
+        return f"{self.reg_no} - {self.web_mail}"
 class UserProfile(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)  # Changed to ForeignKey to remove unique constraint
     registration_number = models.CharField(max_length=25, unique=True)
