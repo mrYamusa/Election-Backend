@@ -125,13 +125,18 @@ class ElectionResultsView(generics.ListAPIView):
                 .annotate(vote_count=Count('id'))
             )
             
-            # Create a dictionary to hold candidate names and their vote counts
+            # Create a dictionary to hold candidate names, their vote counts, and profile pictures
             candidate_results = {}
             for candidate_vote in candidate_votes:
                 candidate_id = candidate_vote['candidate']
                 vote_count = candidate_vote['vote_count']
                 candidate = candidates.get(id=candidate_id)
-                candidate_results[candidate.candidate_name] = vote_count
+                
+                # Add candidate name, vote count, and profile picture URL
+                candidate_results[candidate.candidate_name] = {
+                    'vote_count': vote_count,
+                    'profile_picture': candidate.profile_picture.url if candidate.profile_picture else None
+                }
             
             # Append the position and its candidates' results to the results list
             results.append({
@@ -140,7 +145,7 @@ class ElectionResultsView(generics.ListAPIView):
             })
         
         return Response(results)
-
+    
 # Candidate Registration View
 class CandidateRegistrationView(generics.CreateAPIView):
     queryset = Candidate.objects.all()
