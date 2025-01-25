@@ -124,7 +124,12 @@ class UserVoteHistorySerializer(serializers.ModelSerializer):
     candidate_name = serializers.CharField(source='candidate.candidate_name')
     election_name = serializers.CharField(source='election.name')
     voted_at = serializers.DateTimeField(source='created_at')
+    profile_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = Vote
-        fields = ['position_name', 'candidate_name', 'election_name', 'voted_at']
+        fields = ['position_name', 'candidate_name', 'election_name', 'voted_at', 'profile_picture']
+
+    def get_profile_picture(self, obj):
+        # Get the candidate's profile picture URL
+        return obj.candidate.profile_picture.url if obj.candidate.profile_picture else None
