@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, LoginSerializer
-from elections.models import Election, Candidate, Vote
+from elections.models import Election, Candidate, Vote, Position
 from .serializers import ElectionSerializer, CandidateSerializer, VoteSerializer, PositionSerializer, UserVoteHistorySerializer
 from rest_framework.exceptions import ValidationError
 from django.db import models
@@ -188,7 +188,8 @@ class UserVoteHistoryView(generics.ListAPIView):
         return Vote.objects.filter(voter=self.request.user).select_related(
             'position', 'candidate', 'election'
         ).order_by('-created_at')
-
+    
+from rest_framework.views import APIView
 class CheckVotingStatusView(APIView):
     permission_classes = [IsAuthenticated]
 
