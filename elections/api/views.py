@@ -189,6 +189,21 @@ class UserVoteHistoryView(generics.ListAPIView):
             'position', 'candidate', 'election'
         ).order_by('-created_at')
 
+class CheckVotingStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        # Get all positions
+        positions = Position.objects.all()
+        
+        # Check if the user has voted for each position
+        voted_positions = Vote.objects.filter(voter=request.user).values_list('position_id', flat=True)
+        
+        # Determine if the user has voted for all positions
+        all_voted = all(position.id in voted_positions for position in positions)
+
+        return Response({"has_voted_for_all_positions": "yes" if all_voted else "no"})
+
 from rest_framework.views import APIView
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]

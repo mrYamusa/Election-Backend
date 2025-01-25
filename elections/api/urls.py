@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView, LoginView, CreateElectionView, ListCandidatesView, VoteView, ElectionResultsView, CandidateRegistrationView, ListCandidatesByPositionView, LogoutView, ListPositionsView, UserVoteHistoryView
+from .views import RegisterView, LoginView, CreateElectionView, ListCandidatesView, VoteView, ElectionResultsView, CandidateRegistrationView, ListCandidatesByPositionView, LogoutView, ListPositionsView, UserVoteHistoryView, CheckVotingStatusView
 
 
 urlpatterns = [
@@ -17,7 +17,9 @@ urlpatterns = [
     #  Positions Endpoints
     path('positions/', ListPositionsView.as_view(), name='list-positions'),
     path('my-votes/', UserVoteHistoryView.as_view(), name='user-vote-history'), # Positions the user has voted for and what the user voted
-    
+    # Voting status
+    path('my-voting-status/', CheckVotingStatusView.as_view(), name='check-voting-status'),  # Check voting status
+
     # Voting Endpoints
     path('elections/<int:election_id>/positions/<int:position_id>/candidates/vote/', VoteView.as_view(), name='cast_vote'),
     path('elections/<int:election_id>/positions/<int:position_id>/candidates/', ListCandidatesByPositionView.as_view(), name='list_candidates_by_position'),
