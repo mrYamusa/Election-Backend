@@ -18,15 +18,21 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
+        # Remove any password field from the request data
+        if 'password' in request.data:
+            del request.data['password']
+            
         serializer = self.get_serializer(data=request.data)
         try:
-            serializer.is_valid(raise_exception=True)  # This will raise a ValidationError if invalid
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": "Registration successful. Please check your School web_mail for login credentials.",
+                "username": serializer.data.get('username')
+            }, status=status.HTTP_201_CREATED)
         except ValidationError as e:
-            # Return a structured error response
             return Response({"errors": e.detail}, status=status.HTTP_400_BAD_REQUEST)
-
+        
 # Login View
 class LoginView(generics.GenericAPIView):
     permission_classes = [AllowAny]

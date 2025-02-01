@@ -4,6 +4,7 @@ from rest_framework import serializers
 from django.conf import settings
 from django.urls import reverse
 from rest_framework.exceptions import ValidationError
+from .utils import generate_password, send_credentials_email
 
 class UserSerializer(serializers.ModelSerializer):
     registration_number = serializers.CharField(write_only=True)
@@ -11,8 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password', 'registration_number', 'web_mail']
-        extra_kwargs = {'password': {'write_only': True}}
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'registration_number', 'web_mail']
 
     def create(self, validated_data):
         # Extract registration number and web mail
@@ -28,23 +28,35 @@ class UserSerializer(serializers.ModelSerializer):
         # Check if the user already exists
         if User.objects.filter(username=validated_data['username']).exists():
             raise ValidationError({"username": "A user with this username already exists."})
-        if User.objects.filter(email=validated_data['email']).exists():  # Corrected to check email
+        if User.objects.filter(email=validated_data['email']).exists():
             raise ValidationError({"email": "A user with this email already exists."})
 
-        # Create the user
-        user = User.objects.create_user(**validated_data)
+        # Generate random password
+        password = generate_password()
+        
+        # Create the user with the generated password
+        user = User.objects.create_user(
+            **validated_data,
+            password=password
+        )
 
-        # Create the UserProfile explicitly here
-        UserProfile.objects.create(user=user, registration_number=registration_number, web_mail=web_mail)
+        # Create the UserProfile
+        UserProfile.objects.create(
+            user=user,
+            registration_number=registration_number,
+            web_mail=web_mail
+        )
+
+        # Send credentials via email
+        try:
+            send_credentials_email(web_mail, validated_data['username'], password)
+        except Exception as e:
+            # If email fails, delete the created user and raise error
+            user.delete()
+            raise ValidationError(f"Failed to send credentials email: {str(e)}")
 
         return user
 
-    def to_representation(self, instance):
-        # Customize the representation to exclude registration_number and web_mail
-        representation = super().to_representation(instance)
-        representation.pop('registration_number', None)
-        representation.pop('web_mail', None)
-        return representation
 
 
 from rest_framework import serializers

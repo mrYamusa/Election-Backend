@@ -162,6 +162,13 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'  # For Mailgun
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'postmaster@mg.nacoslmu.me'
+EMAIL_HOST_PASSWORD = 'eb229abb1afb31b515191e226489776d-d8df908e-0d778465'
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
