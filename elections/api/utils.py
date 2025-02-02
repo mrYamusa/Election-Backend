@@ -18,6 +18,7 @@ Username: {username}
 Password: {password}
 
 Please login to vote for your candidate of choice using the credentials above.
+Login here: https://nacos-election.netlify.app/ 
 
 Best regards,
 Idris David'''
