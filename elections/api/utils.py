@@ -3,8 +3,7 @@ import string
 
 def generate_password():
     """Generate a random 12-character password"""
-    characters = string.ascii_letters + string.digits + string.punctuation
-    return ''.join(random.choice(characters) for i in range(12))
+    return ''.join(random.choice(string.digits) for i in range(6))
 
 def send_credentials_email(user_email, username, password):
     from django.core.mail import send_mail
@@ -18,7 +17,7 @@ Username: {username}
 Password: {password}
 
 Please login to vote for your candidate of choice using the credentials above.
-Login here: https://nacos-election.netlify.app/ 
+Login here: https://nacos-voting.netlify.app/
 
 Best regards,
 Idris David'''
