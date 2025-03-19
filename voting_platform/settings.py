@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-^seknyy8o2s_3c8^bte&h6d(n&e5g=104p*obx-*h6uv$xc&cb'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
@@ -140,9 +140,9 @@ REST_FRAMEWORK = {
 }
 
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': 'dbpp4q04p',
-    'API_KEY': '426631541897162',
-    'API_SECRET': 'M2FJDY1s2YHQTGEQh2t6gjrzrlI'  # Replace with your actual API secret
+    'CLOUD_NAME': os.getenv('CLOUD_NAME'),
+    'API_KEY': os.getenv('API_KEY'),
+    'API_SECRET': os.getenv('API_SECRET')  # Replace with your actual API secret
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
